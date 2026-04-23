@@ -1,18 +1,18 @@
 import { Environment, GizmoHelper, GizmoViewport, Grid, Html, OrbitControls, useAnimations, } from "@react-three/drei";
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
-import { AnimationMixer, Box3,  Mesh, Vector3 } from "three";
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import { OrbitControls as OrbitControlsImpl, type GLTF } from 'three-stdlib'
+import { AnimationMixer, Box3, Mesh, PerspectiveCamera, Vector3 } from "three";
+import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
+import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import GUI from 'lil-gui';
 
 let modeldet = {
     "name": ""
 };
 
-function Model({gltf}) {
+function Model({gltf}: any) {
     const { camera } = useThree();
-    const [gltfcur, setGLTFcur] = useState(null);
+    const [gltfcur, setGLTFcur] = useState<GLTF | null>(null);
     const group = useRef(null);
     const controlsRef = useRef<OrbitControlsImpl>(null);
     let id: number;
@@ -25,6 +25,7 @@ function Model({gltf}) {
 
     useEffect(() => {
         if (!gltfcur) return;
+        if (!controlsRef.current) return;
         // setActions(useAnimations(gltfcur.animations, group));
 
         //Create the GUI
@@ -37,7 +38,8 @@ function Model({gltf}) {
                 var input = document.createElement('input');
                 input.type = 'file';
 
-                input.onchange = async (e) => {
+                input.onchange = async (e: any) => {
+                    if (!e.target) return;
                     var file = e.target.files[0];
                     console.log("TYPE:", file);
                     var fileurl = URL.createObjectURL(file);
@@ -64,8 +66,7 @@ function Model({gltf}) {
         const set = {
             wireframe: (() => {
                 gltfcur.scene.traverse((child) => {
-                    if(child.isMesh) {
-                        console.log("MESH F")
+                    if(child instanceof Mesh) {
                         if (Array.isArray(child.material)) {
                             if (wireframe == false) {
                                 child.material.forEach(mat => mat.wireframe = true);
@@ -102,8 +103,8 @@ function Model({gltf}) {
         // Animate and move Camera controls to center of model.
         function animate() {
             id = requestAnimationFrame(animate);
-            controlsRef.current?.target.lerp(center, 0.15);
-            if (controlsRef.current.target.distanceTo(center) < 0.001) {
+            controlsRef.current!.target.lerp(center, 0.15);
+            if (controlsRef.current!.target.distanceTo(center) < 0.001) {
                 console.log("STOPP")
                 cancelAnimationFrame(id);
             }
@@ -115,7 +116,8 @@ function Model({gltf}) {
 
         // Compute radius of bounding sphere
         const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = camera.fov * (Math.PI / 180);
+        const cam = camera as PerspectiveCamera;
+        const fov = cam.fov * (Math.PI / 180);
         const distance = maxDim / (2 * Math.tan(fov / 2));
 
         // position camera relative to center
@@ -176,7 +178,6 @@ function Viewmodelverts(gltf: any) {
 
 function ViewModel() {
     const [fileurl, SetFileurl] = useState(String);
-    const [file, SetFile] = useState();
     const gltf = fileurl ? useLoader(GLTFLoader, fileurl) : null;
     var options = ['glb', 'gltf'];
 
@@ -187,7 +188,6 @@ function ViewModel() {
             const fileExt = droppedFiles[0].name.split('.').pop(); // Check the file type that was uploaded.
             if (options.includes(fileExt)) { // Verify that extension is in our options array.
                 SetFileurl(URL.createObjectURL(droppedFiles[0]));
-                SetFile(droppedFiles[0]);
                 modeldet.name = droppedFiles[0].name;
             } else {
                 window.alert("Invalid file.")

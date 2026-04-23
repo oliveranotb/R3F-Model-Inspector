@@ -1,13 +1,17 @@
 {
   "name": "modelviewer",
+  "homepage": "https://oliveranotb.github.io/R3F-Model-Inspector",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

@@ -1,6 +1,6 @@
 // import { Home } from "./Home"
 import "./main.css";
-import { ModelViewer } from "./ModelViewer"
+import { ModelViewer } from "./ModelViewer.tsx"
 
 function App() {
 

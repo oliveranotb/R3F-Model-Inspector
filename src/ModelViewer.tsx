@@ -1,7 +1,7 @@
-import { CameraControls, Environment, GizmoHelper, GizmoViewport, Grid, Html, OrbitControls, useAnimations, Wireframe } from "@react-three/drei";
+import { Environment, GizmoHelper, GizmoViewport, Grid, Html, OrbitControls, useAnimations, } from "@react-three/drei";
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
-import { act, useEffect, useRef, useState } from "react";
-import { AnimationMixer, Box3, Clock, EdgesGeometry, Mesh, Timer, Vector3 } from "three";
+import { useEffect, useRef, useState } from "react";
+import { AnimationMixer, Box3,  Mesh, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import { OrbitControls as OrbitControlsImpl, type GLTF } from 'three-stdlib'
 import GUI from 'lil-gui';
